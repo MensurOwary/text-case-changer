@@ -1,40 +1,36 @@
 chrome.contextMenus.removeAll();
 
-chrome.contextMenus.create({
+const tree = {
     id: "case_change_parent",
     title: "Change Text Cases",
-    contexts: ["editable"],
-});
+    children: [
+        { id: "uppercase", title: "UPPERCASE" },
+        { id: "capitalize", title: "Capitalize" },
+        { id: "lowercase", title: "lowercase" },
+    ],
+};
 
-chrome.contextMenus.create({
-    parentId: "case_change_parent",
-    id: "uppercase",
-    title: "UPPERCASE",
-    contexts: ["editable"],
-});
+const registerMenu = (data) => {
+    chrome.contextMenus.create({
+        ...data,
+        contexts: ["editable"],
+    });
+};
 
-chrome.contextMenus.create({
-    parentId: "case_change_parent",
-    id: "capitalize",
-    title: "Capitalize",
-    contexts: ["editable"],
-});
-
-chrome.contextMenus.create({
-    parentId: "case_change_parent",
-    id: "lowercase",
-    title: "lowercase",
-    contexts: ["editable"],
-});
+// register parent
+registerMenu({ id: tree.id, title: tree.title });
+for (let child of tree.children) {
+    registerMenu({ ...child, parentId: tree.id });
+}
 
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     chrome.scripting.executeScript(
         {
             target: { tabId: tab.id },
-            files: ['content-script.js']
+            files: ["content-script.js"],
         },
         function () {
-            console.log("sendMessage")
+            console.log("sendMessage");
             chrome.tabs.sendMessage(tab.id, {
                 selectedText: info.selectionText,
                 menuItemId: info.menuItemId,
