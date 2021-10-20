@@ -1,0 +1,24 @@
+{
+    "manifest_version": 3,
+    "version": "0.0.1",
+    "name": "text case change",
+    "author": "Mensur Owary",
+    "description": "Google Chrome extension that allows you to change the case of selected text to uppercase, lowercase or capital case",
+    "background": {
+        "service_worker": "background.js"
+    },
+    "permissions": ["contextMenus", "activeTab", "scripting"],
+    "content_scripts": [
+        {
+            "matches": [
+                "https://*/*",
+                "http://*/*"
+            ],
+            "js": ["content-script.js"]
+        }
+    ],
+    "icons": {
+        "48": "icons/48.png",
+        "128": "icons/128.png"
+    }
+}
